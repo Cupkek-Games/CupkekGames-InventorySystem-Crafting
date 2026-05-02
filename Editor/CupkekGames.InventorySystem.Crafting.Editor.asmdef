@@ -1,0 +1,20 @@
+{
+    "name": "CupkekGames.InventorySystem.Crafting.Editor",
+    "rootNamespace": "CupkekGames.InventorySystem.Crafting.Editor",
+    "references": [
+        "GUID:7d2e8b1a4c5f60938472615093a1b2c3",
+        "GUID:ab7612e7fe1d7e64ab54a584495caa06",
+        "GUID:c638d9e1907db5c458288a361efefb01"
+    ],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}
