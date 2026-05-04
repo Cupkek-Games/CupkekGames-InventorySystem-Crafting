@@ -28,15 +28,10 @@ namespace CupkekGames.InventorySystem.Crafting
             return itemDatabase.GetItemDefinition(_result);
         }
 
-        public float Distance(IngredientEssence essence)
-        {
-            IngredientEssenceRatio other = new IngredientEssenceRatio(essence);
+        public float Distance(IngredientEssence essence) =>
+            Distance(new IngredientEssenceRatio(essence));
 
-            return Distance(other);
-        }
-        public float Distance(IngredientEssenceRatio other)
-        {
-            return _essenceRatio.Distance(other);
-        }
+        public float Distance(IngredientEssenceRatio other) =>
+            _essenceRatio.Distance(other);
     }
 }

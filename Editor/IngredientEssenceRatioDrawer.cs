@@ -1,10 +1,14 @@
 #if UNITY_EDITOR
-using CupkekGames.InventorySystem.Crafting;
 using UnityEditor;
 using UnityEngine;
 
 namespace CupkekGames.InventorySystem.Crafting.Editor
 {
+    /// <summary>
+    /// Inspector for an <see cref="IngredientEssenceRatio"/>. Shows one slider per stored entry,
+    /// labeled by essence key. Designers add/remove entries via the underlying list — this drawer
+    /// just presents them.
+    /// </summary>
     [CustomPropertyDrawer(typeof(IngredientEssenceRatio))]
     public class IngredientEssenceRatioDrawer : PropertyDrawer
     {
@@ -30,15 +34,19 @@ namespace CupkekGames.InventorySystem.Crafting.Editor
                 for (int i = 0; i < valuesArray.arraySize; i++)
                 {
                     position.y += lineHeight + spacing;
-                    SerializedProperty element = valuesArray.GetArrayElementAtIndex(i);
-                    element.floatValue = EditorGUI.Slider(
+                    SerializedProperty entry = valuesArray.GetArrayElementAtIndex(i);
+                    SerializedProperty keyProp = entry.FindPropertyRelative("EssenceKey");
+                    SerializedProperty valueProp = entry.FindPropertyRelative("Value");
+
+                    string label2 = string.IsNullOrEmpty(keyProp.stringValue) ? $"Slot {i}" : keyProp.stringValue;
+                    valueProp.floatValue = EditorGUI.Slider(
                         new Rect(position.x, position.y, position.width, lineHeight),
-                        $"Slot {i}",
-                        element.floatValue,
+                        label2,
+                        valueProp.floatValue,
                         0f,
                         1f
                     );
-                    total += element.floatValue;
+                    total += valueProp.floatValue;
                 }
 
                 position.y += lineHeight + spacing;
@@ -69,7 +77,10 @@ namespace CupkekGames.InventorySystem.Crafting.Editor
 
             float total = 0f;
             for (int i = 0; i < valuesArray.arraySize; i++)
-                total += valuesArray.GetArrayElementAtIndex(i).floatValue;
+            {
+                SerializedProperty entry = valuesArray.GetArrayElementAtIndex(i);
+                total += entry.FindPropertyRelative("Value").floatValue;
+            }
 
             if (!Mathf.Approximately(total, 1f))
                 totalHeight += lineHeight * 2 + spacing;

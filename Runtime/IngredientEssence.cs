@@ -1,59 +1,89 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace CupkekGames.InventorySystem.Crafting
 {
-  [Serializable]
-  public class IngredientEssence
-  {
-    [SerializeField] private int[] _values = new int[5];
-    public int[] Values => _values;
-    public int Count => _values.Length;
-    public int BonusValue = 0;
-
-    public IngredientEssence() { }
-
-    public IngredientEssence(int size)
+    /// <summary>
+    /// Per-essence value pair. <see cref="EssenceKey"/> is the <see cref="IngredientEssenceTypeSO"/>
+    /// asset name (catalog key) — stable across reorderings of the essence-type registry.
+    /// </summary>
+    [Serializable]
+    public class IngredientEssenceValue
     {
-      _values = new int[size];
+        public string EssenceKey;
+        public int Value;
     }
 
-    public void SetValue(int index, int value)
+    /// <summary>
+    /// Essence values keyed by stable <see cref="IngredientEssenceTypeSO"/> identifier (catalog key).
+    /// Replaces the old positional <c>int[5]</c> shape so reordering essence types doesn't corrupt data.
+    /// </summary>
+    [Serializable]
+    public class IngredientEssence
     {
-      if (index >= 0 && index < _values.Length)
-        _values[index] = value;
-    }
+        [SerializeField] private List<IngredientEssenceValue> _values = new List<IngredientEssenceValue>();
+        public IReadOnlyList<IngredientEssenceValue> Values => _values;
 
-    public int GetValue(int index)
-    {
-      return (index >= 0 && index < _values.Length) ? _values[index] : 0;
-    }
+        public int BonusValue;
 
-    public void Add(IngredientEssence other)
-    {
-      int count = Math.Min(_values.Length, other._values.Length);
-      for (int i = 0; i < count; i++)
-        _values[i] += other._values[i];
-    }
+        public IngredientEssence() { }
 
-    public void Remove(IngredientEssence other)
-    {
-      int count = Math.Min(_values.Length, other._values.Length);
-      for (int i = 0; i < count; i++)
-        _values[i] -= other._values[i];
-    }
+        public int GetValue(string essenceKey)
+        {
+            if (string.IsNullOrEmpty(essenceKey)) return 0;
+            for (int i = 0; i < _values.Count; i++)
+            {
+                if (_values[i].EssenceKey == essenceKey) return _values[i].Value;
+            }
+            return 0;
+        }
 
-    public int GetTotalValue()
-    {
-      int total = BonusValue;
-      for (int i = 0; i < _values.Length; i++)
-        total += _values[i];
-      return total;
-    }
+        public int GetValue(IngredientEssenceTypeSO essenceType) =>
+            essenceType != null ? GetValue(essenceType.name) : 0;
 
-    public int GetCookingTime(RecipeSettingsSO settings)
-    {
-      return settings.GetCookingTime(GetTotalValue());
+        public void SetValue(string essenceKey, int value)
+        {
+            if (string.IsNullOrEmpty(essenceKey)) return;
+            for (int i = 0; i < _values.Count; i++)
+            {
+                if (_values[i].EssenceKey == essenceKey)
+                {
+                    _values[i].Value = value;
+                    return;
+                }
+            }
+            _values.Add(new IngredientEssenceValue { EssenceKey = essenceKey, Value = value });
+        }
+
+        public void Add(IngredientEssence other)
+        {
+            if (other == null) return;
+            foreach (IngredientEssenceValue entry in other._values)
+            {
+                SetValue(entry.EssenceKey, GetValue(entry.EssenceKey) + entry.Value);
+            }
+        }
+
+        public void Remove(IngredientEssence other)
+        {
+            if (other == null) return;
+            foreach (IngredientEssenceValue entry in other._values)
+            {
+                SetValue(entry.EssenceKey, GetValue(entry.EssenceKey) - entry.Value);
+            }
+        }
+
+        public int GetTotalValue()
+        {
+            int total = BonusValue;
+            for (int i = 0; i < _values.Count; i++)
+            {
+                total += _values[i].Value;
+            }
+            return total;
+        }
+
+        public int GetCookingTime(RecipeSettingsSO settings) => settings.GetCookingTime(GetTotalValue());
     }
-  }
 }
