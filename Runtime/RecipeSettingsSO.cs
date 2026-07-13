@@ -15,6 +15,7 @@ namespace CupkekGames.InventorySystem.Crafting
         }
 
         [SerializeField] private List<int> _tierThresholds = new() { 10, 30, 60, 100 };
+        public IReadOnlyList<int> TierThresholds => _tierThresholds;
         [SerializeField] private List<DistanceGradeThreshold> _distanceGradeThresholds = new();
         [SerializeField] private RecipeDistanceGrade _defaultGrade = RecipeDistanceGrade.CHAOTIC;
 
