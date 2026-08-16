@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace CupkekGames.InventorySystem.Crafting
 {
-    [CreateAssetMenu(fileName = "IngredientEssenceType", menuName = "CupkekGames/Crafting/Ingredient Essence Type")]
+    [CreateAssetMenu(fileName = "IngredientEssenceType", menuName = "CupkekGames/Inventory/Crafting/Ingredient Essence Type")]
     public class IngredientEssenceTypeSO : ScriptableObject
     {
         [SerializeField] private string _displayName;

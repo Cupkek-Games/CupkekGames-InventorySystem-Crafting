@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace CupkekGames.InventorySystem.Crafting
 {
-    [CreateAssetMenu(fileName = "RecipeSettings", menuName = "CupkekGames/Crafting/Recipe Settings")]
+    [CreateAssetMenu(fileName = "RecipeSettings", menuName = "CupkekGames/Inventory/Crafting/Recipe Settings")]
     public class RecipeSettingsSO : ScriptableObject
     {
         [Serializable]
